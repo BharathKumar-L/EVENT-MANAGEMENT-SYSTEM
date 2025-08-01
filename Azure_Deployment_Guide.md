@@ -60,8 +60,8 @@ The application demonstrates modern web development practices including componen
 - **Azure Functions**: For serverless event processing and background tasks
 
 **Database Services:**
-- **Azure Cosmos DB**: MongoDB-compatible database for storing user data, events, and tickets
-- **Azure Database for MongoDB**: Alternative managed MongoDB service
+- **Azure Database for MongoDB**: Managed MongoDB service for storing user data, events, and tickets
+- **MongoDB Atlas**: Cloud-hosted MongoDB service with Azure integration
 
 **Storage Services:**
 - **Azure Blob Storage**: Store event images, user uploads, and static assets
@@ -209,7 +209,7 @@ The application demonstrates modern web development practices including componen
 
 **Azure Service Integration:**
 - **Azure App Service**: Hosts both frontend and backend applications
-- **Azure Cosmos DB**: Stores user data, events, and ticket information
+- **Azure Database for MongoDB**: Stores user data, events, and ticket information
 - **Azure Blob Storage**: Stores event images and static assets
 - **Azure Key Vault**: Secures JWT secrets and database connections
 - **Azure Application Insights**: Monitors application performance and user behavior
@@ -230,7 +230,7 @@ The application demonstrates modern web development practices including componen
 - Implement proper error handling and logging
 
 **Database Setup:**
-- Provision Azure Cosmos DB with MongoDB API
+- Provision Azure Database for MongoDB
 - Configure connection strings and access policies
 - Set up backup and disaster recovery
 - Implement data migration scripts
@@ -278,11 +278,11 @@ az webapp create --name event-management-backend --resource-group event-manageme
 
 **Step 2: Database Setup**
 ```bash
-# Create Cosmos DB account
-az cosmosdb create --name event-management-db --resource-group event-management-rg --kind MongoDB
+# Create Azure Database for MongoDB
+az mongodb create --name event-management-mongodb --resource-group event-management-rg --location eastus --sku-name M10
 
 # Get connection string
-az cosmosdb keys list --name event-management-db --resource-group event-management-rg --type connection-strings
+az mongodb show-connection-string --name event-management-mongodb --resource-group event-management-rg
 ```
 
 **Step 3: Storage Setup**
@@ -313,7 +313,7 @@ git push azure main
 **Step 5: Configuration**
 ```bash
 # Set environment variables for backend
-az webapp config appsettings set --name event-management-backend --resource-group event-management-rg --settings MONGO_URL="<cosmos-db-connection-string>"
+az webapp config appsettings set --name event-management-backend --resource-group event-management-rg --settings MONGO_URL="<mongodb-connection-string>"
 
 # Set environment variables for frontend
 az webapp config appsettings set --name event-management-frontend --resource-group event-management-rg --settings REACT_APP_API_URL="https://event-management-backend.azurewebsites.net"
@@ -327,8 +327,8 @@ az webapp config appsettings set --name event-management-frontend --resource-gro
 - Implement auto-scaling based on traffic patterns
 
 **Database Optimization:**
-- Use serverless Cosmos DB for development
-- Scale to provisioned throughput for production
+- Use Basic tier for Azure Database for MongoDB in development
+- Scale to Standard tier for production
 - Implement proper indexing strategies
 
 **Storage Optimization:**
@@ -364,4 +364,4 @@ az webapp config appsettings set --name event-management-frontend --resource-gro
 - Implement rate limiting
 - Use HTTPS everywhere
 
-This architecture provides a scalable, secure, and high-performance solution for event management with global accessibility and enterprise-grade reliability. 
+This architecture provides a scalable, secure, and high-performance solution for event management with global accessibility and enterprise-grade reliability.
