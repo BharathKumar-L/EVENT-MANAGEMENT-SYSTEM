@@ -99,54 +99,78 @@ The Event Management System is a comprehensive web application designed to facil
 ## 3. FUNCTIONAL REQUIREMENTS
 
 ### 3.1 User Management
-- **User Registration**: New users can create accounts with email and password
-- **User Authentication**: Secure login with JWT token-based sessions
-- **Password Management**: Forgot password and reset functionality
-- **User Profiles**: View and manage personal information
+
+| **Feature** | **Expected Usage** | **Azure Spec** | **Scaling Methods** |
+|-------------|-------------------|----------------|---------------------|
+| **User Registration** | New users can create accounts with email and password | Azure AD B2C, App Service Authentication | Auto-scaling App Service, Database read replicas |
+| **User Authentication** | Secure login with JWT token-based sessions | Azure Key Vault for JWT secrets, App Service | Redis Cache for session management, Load balancing |
+| **Password Management** | Forgot password and reset functionality | Azure AD B2C password policies | Multi-region deployment, CDN for global access |
+| **User Profiles** | View and manage personal information | Azure Database for MongoDB, Blob Storage | Database sharding, Content delivery optimization |
 
 ### 3.2 Event Management
-- **Event Creation**: Comprehensive event creation with detailed information
-- **Event Listing**: Browse all available events with filtering options
-- **Event Details**: View complete event information including images
-- **Event Updates**: Modify event details and information
-- **Event Deletion**: Remove events from the system
+
+| **Feature** | **Expected Usage** | **Azure Spec** | **Scaling Methods** |
+|-------------|-------------------|----------------|---------------------|
+| **Event Creation** | Comprehensive event creation with detailed information | Azure App Service, MongoDB, Blob Storage | Auto-scaling based on CPU/memory, Storage tier optimization |
+| **Event Listing** | Browse all available events with filtering options | Azure Database for MongoDB, App Service | Database indexing, Query optimization, CDN caching |
+| **Event Details** | View complete event information including images | Azure Blob Storage, MongoDB, App Service | Image compression, Progressive loading, Edge caching |
+| **Event Updates** | Modify event details and information | Azure App Service, MongoDB, Blob Storage | Optimistic locking, Conflict resolution, Real-time sync |
+| **Event Deletion** | Remove events from the system | Azure App Service, MongoDB, Blob Storage | Soft delete, Archive policies, Storage lifecycle management |
 
 ### 3.3 Ticket Management
-- **Ticket Booking**: Purchase tickets for events
-- **Ticket Validation**: QR code generation for ticket verification
-- **Order Summary**: Detailed booking confirmation
-- **Payment Processing**: Secure payment handling
-- **Ticket History**: View booking history and tickets
+
+| **Feature** | **Expected Usage** | **Azure Spec** | **Scaling Methods** |
+|-------------|-------------------|----------------|---------------------|
+| **Ticket Booking** | Purchase tickets for events | Azure App Service, MongoDB, Azure Functions | Queue-based processing, Auto-scaling Functions, Database partitioning |
+| **Ticket Validation** | QR code generation for ticket verification | Azure Functions, MongoDB, QR generation libraries | Serverless scaling, Edge computing, Offline validation |
+| **Order Summary** | Detailed booking confirmation | Azure App Service, MongoDB, Email services | Template caching, Async processing, Multi-region deployment |
+| **Payment Processing** | Secure payment handling | Azure Key Vault, App Service, Payment gateways | PCI compliance, Encryption at rest/transit, Secure networking |
+| **Ticket History** | View booking history and tickets | Azure Database for MongoDB, App Service | Data archiving, Read replicas, Pagination optimization |
 
 ### 3.4 Additional Features
-- **Like System**: Users can like events
-- **Image Upload**: Event organizers can upload event images
-- **Responsive Design**: Mobile-friendly interface
-- **Real-time Updates**: Live event information updates
+
+| **Feature** | **Expected Usage** | **Azure Spec** | **Scaling Methods** |
+|-------------|-------------------|----------------|---------------------|
+| **Like System** | Users can like events | Azure App Service, MongoDB, Redis Cache | Cache warming, Write-behind caching, Event-driven updates |
+| **Image Upload** | Event organizers can upload event images | Azure Blob Storage, App Service, CDN | Progressive upload, Image optimization, Geographic distribution |
+| **Responsive Design** | Mobile-friendly interface | Azure App Service, CDN, Front Door | Adaptive scaling, Device detection, Performance optimization |
+| **Real-time Updates** | Live event information updates | Azure SignalR Service, App Service | WebSocket scaling, Connection pooling, Message queuing |
 
 ## 4. NON-FUNCTIONAL REQUIREMENTS
 
 ### 4.1 Performance
-- **Response Time**: API responses within 2 seconds
-- **Scalability**: Support for multiple concurrent users
-- **Efficiency**: Optimized database queries and data handling
+
+| **Feature** | **Expected Usage** | **Azure Spec** | **Scaling Methods** |
+|-------------|-------------------|----------------|---------------------|
+| **Response Time** | API responses within 2 seconds | Azure App Service, Application Gateway, CDN | Load balancing, Auto-scaling, Edge caching |
+| **Scalability** | Support for multiple concurrent users | Azure App Service Plan, MongoDB Atlas | Horizontal scaling, Database sharding, Read replicas |
+| **Efficiency** | Optimized database queries and data handling | Azure Database for MongoDB, Redis Cache | Query optimization, Indexing strategies, Connection pooling |
 
 ### 4.2 Security
-- **Authentication**: Secure JWT-based user authentication
-- **Password Security**: bcrypt hashing for password protection
-- **Data Validation**: Input sanitization and validation
-- **CORS Configuration**: Proper cross-origin resource sharing setup
+
+| **Feature** | **Expected Usage** | **Azure Spec** | **Scaling Methods** |
+|-------------|-------------------|----------------|---------------------|
+| **Authentication** | Secure JWT-based user authentication | Azure Key Vault, Azure AD B2C | Multi-factor authentication, Conditional access, Identity protection |
+| **Password Security** | bcrypt hashing for password protection | Azure Key Vault, Azure AD B2C | Password policies, Breach detection, Secure storage |
+| **Data Validation** | Input sanitization and validation | Azure App Service, Azure Front Door | WAF rules, Input filtering, Rate limiting |
+| **CORS Configuration** | Proper cross-origin resource sharing setup | Azure App Service, Azure Front Door | Origin validation, Header management, Security policies |
 
 ### 4.3 Usability
-- **User Interface**: Intuitive and responsive design
-- **Accessibility**: Support for various devices and screen sizes
-- **Navigation**: Clear and logical user flow
-- **Error Handling**: User-friendly error messages and validation
+
+| **Feature** | **Expected Usage** | **Azure Spec** | **Scaling Methods** |
+|-------------|-------------------|----------------|---------------------|
+| **User Interface** | Intuitive and responsive design | Azure App Service, CDN, Front Door | Progressive web app, Adaptive UI, Performance optimization |
+| **Accessibility** | Support for various devices and screen sizes | Azure App Service, CDN, Front Door | Responsive design, Device detection, Content adaptation |
+| **Navigation** | Clear and logical user flow | Azure App Service, React Router | Client-side routing, State management, User experience optimization |
+| **Error Handling** | User-friendly error messages and validation | Azure App Service, Application Insights | Error tracking, User feedback, Graceful degradation |
 
 ### 4.4 Reliability
-- **Data Integrity**: Consistent database operations
-- **Error Recovery**: Graceful handling of system failures
-- **Backup Systems**: Data backup and recovery procedures
+
+| **Feature** | **Expected Usage** | **Azure Spec** | **Scaling Methods** |
+|-------------|-------------------|----------------|---------------------|
+| **Data Integrity** | Consistent database operations | Azure Database for MongoDB, Cosmos DB | ACID compliance, Transaction management, Data validation |
+| **Error Recovery** | Graceful handling of system failures | Azure App Service, Application Insights | Circuit breakers, Retry policies, Fallback mechanisms |
+| **Backup Systems** | Data backup and recovery procedures | Azure Backup, MongoDB Atlas | Automated backups, Point-in-time recovery, Geo-redundancy |
 
 ## 5. IMPLEMENTATION STATUS
 
