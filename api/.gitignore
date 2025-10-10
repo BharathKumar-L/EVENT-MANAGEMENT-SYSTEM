@@ -1,0 +1,9 @@
+node_modules
+.env
+
+# Ignore Terraform downloaded binaries and state
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+.env.example
