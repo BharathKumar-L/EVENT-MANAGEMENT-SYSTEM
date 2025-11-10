@@ -21,17 +21,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd api
           npm install
 
       - name: Build app (optional)
         run: |
-          cd api
           npm run build --if-present
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'webapp-ems' # Your Azure App Service name
+          app-name: 'webapp-ems' 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_WEBAPP_EMS }}
-          package: ./api
+          package: .
