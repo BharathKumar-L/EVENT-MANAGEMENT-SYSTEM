@@ -447,6 +447,10 @@ app.delete("/tickets/:id", async (req, res) => {
    }
 });
 
+app.get("/test", (req, res) => {
+  res.send("test ok");
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
    console.log(`Server is running on port ${PORT}`);
