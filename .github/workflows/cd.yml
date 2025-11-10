@@ -1,31 +1,33 @@
-name: Simple CD
+name: Build and deploy Node.js app to Azure Web App - webapp-ems
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Build API Docker image
-        run: |
-          cd api
-          docker build -t api:latest .
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
 
-      - name: Build Client Docker image
-        run: |
-          cd client
-          docker build -t client:latest .
+      - name: Install dependencies
+        run: npm install
 
-      - name: Simulate Deployment
-        run: |
-          echo "API and Client images built successfully."
-          echo "You can now push these images or deploy them manually."
+      - name: Build app (if applicable)
+        run: npm run build --if-present
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'webapp-ems' # your Azure app name
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_WEBAPP_EMS }}
+          package: .
