@@ -233,20 +233,21 @@ app.post("/logout", (req, res) => {
 const createEventSchema = {
   validate: (body) => {
     const schema = Joi.object({
-      owner: Joi.string().required(),
-      title: Joi.string().min(3).max(150).required(),
-      description: Joi.string().min(10).required(),
-      organizedBy: Joi.string().required(),
-      eventDate: Joi.date().iso().required(),
-      eventTime: Joi.string().required(),
-      location: Joi.string().required(),
-      Participants: Joi.number().integer().min(0),
-      Count: Joi.number().integer().min(0),
-      Income: Joi.number().min(0),
-      ticketPrice: Joi.number().min(0).required(),
-      Quantity: Joi.number().integer().min(0),
-      likes: Joi.number().integer().min(0),
-      Comment: Joi.array().items(Joi.string()),
+         owner: Joi.string().required(),
+         title: Joi.string().min(3).max(150).required(),
+         optional: Joi.string().allow('').optional(),
+         description: Joi.string().min(10).required(),
+         organizedBy: Joi.string().required(),
+         eventDate: Joi.date().required(),
+         eventTime: Joi.string().required(),
+         location: Joi.string().required(),
+         Participants: Joi.number().integer().min(0),
+         Count: Joi.number().integer().min(0),
+         Income: Joi.number().min(0),
+         ticketPrice: Joi.number().min(0).required(),
+         Quantity: Joi.number().integer().min(0),
+         likes: Joi.number().integer().min(0),
+         Comment: Joi.array().items(Joi.string()),
     });
     return schema.validate(body);
   }
@@ -254,14 +255,42 @@ const createEventSchema = {
 
 app.post("/createEvent", createEventLimiter, upload.single("image"), async (req, res) => {
    try {
-      const eventData = req.body;
+      const eventData = { ...req.body };
+
+      // If an authenticated user exists, prefer server-side owner value from JWT
+      try {
+         const token = req.cookies?.token || req.cookies?.Token || req.cookies?.COOKIE;
+         if (token) {
+            jwt.verify(token, jwtSecret, {}, (err, userData) => {
+               if (!err && userData && userData.id) {
+                  // set owner to user id to avoid missing/incorrect owner from client
+                  eventData.owner = userData.id;
+               }
+            });
+         }
+      } catch (e) {
+         // non-fatal: proceed with whatever owner the client provided
+         console.warn(req.id, 'owner-extract-failed', e && e.message);
+      }
+
+      // Validate incoming data (Joi will attempt type conversion by default)
       const { error } = createEventSchema.validate(eventData);
-      if (error) return res.status(400).json({ error: error.message });
+      if (error) {
+         // Log details to aid debugging
+         console.warn(req.id, 'createEvent validation failed', {
+            message: error.message,
+            body: req.body,
+            file: req.file ? { originalname: req.file.originalname, mimetype: req.file.mimetype, size: req.file.size } : null,
+         });
+         return res.status(400).json({ error: error.message });
+      }
+
       eventData.image = req.file ? req.file.path : "";
       const newEvent = new Event(eventData);
       await newEvent.save();
       res.status(201).json(newEvent);
    } catch (error) {
+      console.error(req.id, 'createEvent error', error);
       res.status(500).json({ error: "Failed to save the event to MongoDB" });
    }
 });
@@ -352,7 +381,7 @@ const createTicketSchema = {
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         eventname: Joi.string().required(),
-        eventdate: Joi.date().iso().required(),
+        eventdate: Joi.date().required(),
         eventtime: Joi.string().required(),
         ticketprice: Joi.number().min(0).required(),
         qr: Joi.string().required(),

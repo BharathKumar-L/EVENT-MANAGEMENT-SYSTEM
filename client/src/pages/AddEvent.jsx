@@ -1,4 +1,5 @@
 import  { useContext, useState } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 import { UserContext } from '../UserContext';
 
@@ -6,7 +7,8 @@ export default function AddEvent() {
   const {user} = useContext(UserContext);
   const [formData, setFormData] = useState({
 
-    owner: user? user.name : "",
+    // prefer the user's id as owner (if available)
+    owner: user? user._id : "",
     title: "",
     optional:"",
     description: "",
@@ -18,6 +20,13 @@ export default function AddEvent() {
     image: '',
     likes: 0
   });
+
+  // keep owner in sync if user becomes available after mount
+  useEffect(() => {
+    if (user && user._id) {
+      setFormData((prev) => ({ ...prev, owner: user._id }));
+    }
+  }, [user]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -46,6 +55,8 @@ export default function AddEvent() {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        // include cookies (token) so server-side owner extraction can work
+        withCredentials: true,
       })
       .then((response) => {
         console.log("Event posted successfully:", response.data);
