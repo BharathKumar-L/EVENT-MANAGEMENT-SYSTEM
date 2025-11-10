@@ -7,29 +7,43 @@ on:
     branches: [ main ]
 
 jobs:
-  api:
+  backend:
+    name: Build & Verify Backend
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: api
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci || npm install
-      - run: node -e "require('fs').existsSync('index.js') && console.log('API present')"
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Verify backend entry
+        run: node -e "require('fs').existsSync('index.js') && console.log('✅ Backend entry index.js found')"
 
   client:
+    name: Build Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: client
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci || npm install
-      - run: npm run build --if-present
 
+      - name: Install client dependencies
+        run: npm ci || npm install
+
+      - name: Build client app
+        run: npm run build --if-present
