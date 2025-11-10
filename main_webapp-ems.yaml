@@ -1,0 +1,31 @@
+name: Simple CD
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build API Docker image
+        run: |
+          cd api
+          docker build -t api:latest .
+
+      - name: Build Client Docker image
+        run: |
+          cd client
+          docker build -t client:latest .
+
+      - name: Simulate Deployment
+        run: |
+          echo "API and Client images built successfully."
+          echo "You can now push these images or deploy them manually."
