@@ -115,7 +115,7 @@ app.get('/healthz', (_req, res) => {
 // Readiness: check db connection
 app.get('/readyz', async (_req, res) => {
   try {
-    const state = mongoose.connection.readyState; // 1 connected
+    const state = mongoose.connection.readyState; 
     if (state === 1) return res.status(200).json({ db: 'connected' });
     return res.status(503).json({ db: 'not_connected', state });
   } catch (e) {
