@@ -24,7 +24,7 @@ jobs:
         run: npm ci || npm install
 
       - name: Verify backend entry
-        run: node -e "require('fs').existsSync('index.js') && console.log('✅ Backend entry index.js found')"
+        run: node -e "require('fs').existsSync('server.js') && console.log('✅ Backend entry server.js found')"
 
   client:
     name: Build Frontend
