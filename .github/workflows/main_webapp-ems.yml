@@ -35,13 +35,42 @@ jobs:
 
       - name: Prepare deployment package
         run: |
+          set -e
           mkdir -p deployment
-          cp -r models deployment/
-          cp server.js deployment/
-          cp package*.json deployment/
-          cp web.config deployment/
+          # copy models if present
+          if [ -d models ]; then
+            cp -r models deployment/
+          else
+            echo "No models/ directory found, skipping"
+          fi
+          # copy server files
+          if [ -f server.js ]; then
+            cp server.js deployment/
+          else
+            echo "server.js not found in repo root — ensure entrypoint is correct"
+            exit 1
+          fi
+          # copy package files
+          shopt -s nullglob || true
+          PKGS=(package*.json)
+          if [ ${#PKGS[@]} -gt 0 ]; then
+            cp ${PKGS[@]} deployment/ || true
+          else
+            echo "No package*.json files found"
+          fi
+          # copy web.config if exists (optional)
+          if [ -f web.config ]; then
+            cp web.config deployment/
+          else
+            echo "No web.config found, skipping"
+          fi
           mkdir -p deployment/public
-          cp -r client/dist/* deployment/public/
+          # copy built client if it exists
+          if [ -d client/dist ]; then
+            cp -r client/dist/* deployment/public/ || true
+          else
+            echo "client/dist not found — did the client build succeed?"
+          fi
           mkdir -p deployment/uploads
 
       - name: Azure Login
