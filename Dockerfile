@@ -1,19 +1,37 @@
-# api/Dockerfile
-FROM node:18-alpine
+# Multi-stage build: Build client, then server
+FROM node:18-alpine AS client-builder
+WORKDIR /client
+COPY client/package*.json ./
+RUN npm ci
+COPY client/ ./
+RUN npm run build
 
-# Create app directory
+# Server stage
+FROM node:18-alpine
 WORKDIR /app
 
-# Install dependencies (use package.json and package-lock.json)
+# Install server dependencies
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci --production
 
-# Copy source code
-COPY . .
+# Copy server source
+COPY server.js ./
+COPY models/ ./models/
+COPY web.config ./
 
-# Expose port your app listens on (change if your app uses another port)
-ENV PORT=5000
-EXPOSE 5000
+# Copy built client from builder stage
+COPY --from=client-builder /client/dist ./public
 
-# Run the app (change "index.js" to your entry file if different)
-CMD ["node", "index.js"]
+# Create uploads directory
+RUN mkdir -p uploads
+
+# Expose port
+ENV PORT=4000
+EXPOSE 4000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:4000/healthz', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Run the app
+CMD ["node", "server.js"]
