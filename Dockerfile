@@ -17,7 +17,6 @@ RUN npm ci --production
 # Copy server source
 COPY server.js ./
 COPY models/ ./models/
-COPY web.config ./
 
 # Copy built client from builder stage
 COPY --from=client-builder /client/dist ./public
