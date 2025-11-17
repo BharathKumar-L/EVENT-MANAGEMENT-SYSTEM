@@ -58,12 +58,14 @@ function isDevLocalOrigin(origin) {
 app.use(
    cors({
       credentials: true,
-      origin: function(origin, callback) {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin) || isDevLocalOrigin(origin)) {
-          return callback(null, true);
-        }
-        return callback(new Error('Not allowed by CORS'));
+      origin: function (origin, callback) {
+         if (!origin) return callback(null, true);
+
+         if (allowedOrigins.some(o => origin.startsWith(o)) || isDevLocalOrigin(origin)) {
+            return callback(null, true);
+         }
+         console.log("❌ CORS BLOCKED:", origin);
+         return callback(new Error("Not allowed by CORS"));
       },
    })
 );
